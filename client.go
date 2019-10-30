@@ -1,8 +1,8 @@
 package uport
 
 // @author  Mikhail Kirillov <mikkirillov@yandex.ru>
-// @version 1.000
-// @date    2019-10-27
+// @version 1.001
+// @date    2019-10-30
 
 import (
 	"net"
@@ -25,6 +25,9 @@ func NewClient(addr string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	conn.SetReadBuffer(setBufferSize)
+	conn.SetWriteBuffer(setBufferSize)
 
 	return &Client{con: conn, addr: raddr, buffer: make([]byte, 10240)}, nil
 }

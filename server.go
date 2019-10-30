@@ -1,8 +1,8 @@
 package uport
 
 // @author  Mikhail Kirillov <mikkirillov@yandex.ru>
-// @version 1.000
-// @date    2019-10-27
+// @version 1.001
+// @date    2019-10-30
 
 import (
 	"fmt"
@@ -10,6 +10,10 @@ import (
 	"sync"
 
 	"github.com/belfinor/log"
+)
+
+const (
+	setBufferSize int = 10 * 1024 * 1024
 )
 
 type Handler func(msg []byte) []byte
@@ -26,7 +30,10 @@ func Server(addr string, fn Handler) error {
 		return err
 	}
 
-	pool := sync.Pool{New: func() interface{} { return make([]byte, 10240) }}
+	ln.SetReadBuffer(setBufferSize)
+	ln.SetWriteBuffer(setBufferSize)
+
+	pool := sync.Pool{New: func() interface{} { return make([]byte, 64*1024) }}
 
 	for {
 
