@@ -1,11 +1,12 @@
 package uport
 
 // @author  Mikhail Kirillov <mikkirillov@yandex.ru>
-// @version 1.001
-// @date    2019-10-30
+// @version 1.002
+// @date    2019-11-13
 
 import (
 	"net"
+	"time"
 )
 
 type Client struct {
@@ -33,11 +34,16 @@ func NewClient(addr string) (*Client, error) {
 }
 
 func (c *Client) Send(msg []byte) error {
+
+	c.con.SetWriteDeadline(time.Now().Add(5 * time.Second))
+
 	_, err := c.con.Write(msg)
 	return err
 }
 
 func (c *Client) Read() ([]byte, error) {
+
+	c.con.SetReadDeadline(time.Now().Add(5 * time.Second))
 
 	n, _, err := c.con.ReadFromUDP(c.buffer)
 	if err != nil {
